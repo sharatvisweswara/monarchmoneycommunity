@@ -27,6 +27,8 @@ ERRORS_KEY = "error_code"
 SESSION_DIR = ".mm"
 SESSION_FILE = f"{SESSION_DIR}/mm_session.pickle"
 DEFAULT_TIMEOUT_SECS = 300
+
+
 @dataclass
 class BalanceHistoryRow:
     date: datetime
