@@ -34,6 +34,9 @@ class TestMonarchMoney(unittest.IsolatedAsyncioTestCase):
         )
         result = await self.monarch_money.get_accounts()
         mock_execute_async.assert_called_once()
+        kwargs = mock_execute_async.call_args.kwargs
+        self.assertIn("request", kwargs)
+        self.assertNotIn("document", kwargs)
         self.assertIsNotNone(result, "Expected result to not be None")
         self.assertEqual(len(result["accounts"]), 7, "Expected 7 accounts")
         self.assertEqual(
@@ -111,6 +114,8 @@ class TestMonarchMoney(unittest.IsolatedAsyncioTestCase):
         mock_execute_async.assert_called_once()
 
         kwargs = mock_execute_async.call_args.kwargs
+        self.assertIn("request", kwargs)
+        self.assertNotIn("document", kwargs)
         self.assertEqual(kwargs["operation_name"], "Common_DeleteAccount")
         self.assertEqual(kwargs["variable_values"], {"id": "170123456789012345"})
 

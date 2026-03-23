@@ -2,7 +2,6 @@ import asyncio
 import calendar
 import csv
 import getpass
-import importlib.metadata as importlib_metadata
 import json
 import mimetypes
 import os
@@ -28,26 +27,6 @@ ERRORS_KEY = "error_code"
 SESSION_DIR = ".mm"
 SESSION_FILE = f"{SESSION_DIR}/mm_session.pickle"
 DEFAULT_TIMEOUT_SECS = 300
-
-
-def _is_gql_v4_or_newer() -> bool:
-    """
-    Returns True when installed gql major version is 4+.
-    Defaults to False when version cannot be determined.
-    """
-    try:
-        gql_version = importlib_metadata.version("gql")
-        major = gql_version.split(".", 1)[0]
-        major_digits = "".join(ch for ch in major if ch.isdigit())
-        if major_digits:
-            return int(major_digits) >= 4
-    except importlib_metadata.PackageNotFoundError:
-        pass
-    except Exception:
-        pass
-    return False
-
-
 @dataclass
 class BalanceHistoryRow:
     date: datetime
@@ -3246,31 +3225,11 @@ class MonarchMoney(object):
         """
         Makes a GraphQL call to Monarch Money's API.
         """
-        execute_async = self._get_graphql_client().execute_async
-        use_request_arg = _is_gql_v4_or_newer()
-        kwargs = {
-            "variable_values": variables,
-            "operation_name": operation,
-        }
-
-        if use_request_arg:
-            kwargs["request"] = graphql_query
-        else:
-            kwargs["document"] = graphql_query
-
-        try:
-            return await execute_async(**kwargs)
-        except TypeError as ex:
-            # Defensive fallback if runtime signature does not match detected version.
-            if "unexpected keyword argument" not in str(ex):
-                raise
-            kwargs.pop("request", None)
-            kwargs.pop("document", None)
-            if use_request_arg:
-                kwargs["document"] = graphql_query
-            else:
-                kwargs["request"] = graphql_query
-            return await execute_async(**kwargs)
+        return await self._get_graphql_client().execute_async(
+            request=graphql_query,
+            variable_values=variables,
+            operation_name=operation,
+        )
 
     def save_session(self, filename: Optional[str] = None) -> None:
         """

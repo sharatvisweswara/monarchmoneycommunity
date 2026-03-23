@@ -30,7 +30,7 @@ Clone this repository from Git
 
 Import the library as `monarchmoney` after installation.
 
-This package supports `gql` versions `>=3.5` and `4.x`, including both pre-4.0 and 4.0+ execution argument styles.
+This package pins `gql` to `4.0`.
 # Instantiate & Login
 
 There are two ways to use this library: interactive and non-interactive.
