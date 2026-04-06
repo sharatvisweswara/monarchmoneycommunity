@@ -257,6 +257,42 @@ class TestMonarchMoney(unittest.IsolatedAsyncioTestCase):
             "Expected needsReview filter to be True",
         )
 
+    @patch.object(Client, "execute_async")
+    async def test_get_transaction_rules(self, mock_execute_async):
+        """
+        Test the get_transaction_rules method.
+        """
+        mock_execute_async.return_value = TestMonarchMoney.loadTestData(
+            filename="get_transaction_rules.json",
+        )
+        result = await self.monarch_money.get_transaction_rules()
+        mock_execute_async.assert_called_once()
+        kwargs = mock_execute_async.call_args.kwargs
+        self.assertIn("request", kwargs)
+        self.assertEqual(kwargs["operation_name"], "GetTransactionRules")
+        self.assertIsNotNone(result)
+        rules = result["transactionRules"]
+        self.assertEqual(len(rules), 3)
+        # rule 0: merchantCriteria + amountCriteria + addTagsAction
+        self.assertEqual(rules[0]["id"], "240260841947181816")
+        self.assertEqual(rules[0]["order"], 0)
+        self.assertEqual(rules[0]["merchantCriteria"][0]["operator"], "contains")
+        self.assertEqual(rules[0]["merchantCriteria"][0]["value"], "monarch")
+        self.assertEqual(rules[0]["amountCriteria"]["operator"], "gt")
+        self.assertTrue(rules[0]["amountCriteria"]["isExpense"])
+        self.assertEqual(rules[0]["setCategoryAction"]["name"], "Financial & Legal Services")
+        self.assertEqual(rules[0]["addTagsAction"][0]["name"], "Subscription")
+        # rule 1: merchantNameCriteria only
+        self.assertEqual(rules[1]["id"], "240264693086859910")
+        self.assertIsNone(rules[1]["merchantCriteria"])
+        self.assertEqual(rules[1]["merchantNameCriteria"][0]["operator"], "eq")
+        self.assertEqual(rules[1]["merchantNameCriteria"][0]["value"], "carta")
+        # rule 2: originalStatementCriteria + setMerchantAction
+        self.assertEqual(rules[2]["id"], "240265406064013452")
+        self.assertEqual(rules[2]["originalStatementCriteria"][0]["value"], "darbar")
+        self.assertEqual(rules[2]["setMerchantAction"]["name"], "Darbar Entertainment")
+        self.assertEqual(rules[2]["setCategoryAction"]["name"], "Entertainment & Recreation")
+
     @patch("builtins.input", return_value="")
     @patch("getpass.getpass", return_value="")
     async def test_interactive_login(self, _input_mock, _getpass_mock):

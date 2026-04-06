@@ -1,0 +1,162 @@
+{
+  "transactionRules": [
+    {
+      "id": "240260841947181816",
+      "order": 0,
+      "merchantCriteriaUseOriginalStatement": false,
+      "merchantCriteria": [
+        {
+          "operator": "contains",
+          "value": "monarch",
+          "__typename": "MerchantCriterion"
+        }
+      ],
+      "originalStatementCriteria": null,
+      "merchantNameCriteria": null,
+      "amountCriteria": {
+        "operator": "gt",
+        "isExpense": true,
+        "value": 0,
+        "valueRange": null,
+        "__typename": "AmountCriteriaV2"
+      },
+      "categoryIds": null,
+      "accountIds": null,
+      "categories": [],
+      "accounts": [],
+      "criteriaOwnerIsJoint": false,
+      "criteriaOwnerUserIds": null,
+      "criteriaOwnerUsers": null,
+      "criteriaBusinessEntityIds": null,
+      "criteriaBusinessEntityIsUnassigned": false,
+      "setMerchantAction": null,
+      "setCategoryAction": {
+        "id": "240260841788846929",
+        "name": "Financial & Legal Services",
+        "icon": "\uD83D\uDDC4",
+        "__typename": "Category"
+      },
+      "addTagsAction": [
+        {
+          "id": "240260841753195488",
+          "name": "Subscription",
+          "color": "#ffcb12",
+          "__typename": "TransactionTag"
+        }
+      ],
+      "linkGoalAction": null,
+      "linkSavingsGoalAction": null,
+      "needsReviewByUserAction": null,
+      "unassignNeedsReviewByUserAction": false,
+      "sendNotificationAction": false,
+      "setHideFromReportsAction": false,
+      "reviewStatusAction": null,
+      "actionSetOwnerIsJoint": false,
+      "actionSetOwner": null,
+      "actionSetBusinessEntity": null,
+      "actionSetBusinessEntityIsUnassigned": false,
+      "recentApplicationCount": 0,
+      "lastAppliedAt": null,
+      "splitTransactionsAction": null,
+      "__typename": "TransactionRuleV2"
+    },
+    {
+      "id": "240264693086859910",
+      "order": 1,
+      "merchantCriteriaUseOriginalStatement": false,
+      "merchantCriteria": null,
+      "originalStatementCriteria": null,
+      "merchantNameCriteria": [
+        {
+          "operator": "eq",
+          "value": "carta",
+          "__typename": "MerchantCriterion"
+        }
+      ],
+      "amountCriteria": null,
+      "categoryIds": null,
+      "accountIds": null,
+      "categories": [],
+      "accounts": [],
+      "criteriaOwnerIsJoint": false,
+      "criteriaOwnerUserIds": null,
+      "criteriaOwnerUsers": null,
+      "criteriaBusinessEntityIds": null,
+      "criteriaBusinessEntityIsUnassigned": false,
+      "setMerchantAction": null,
+      "setCategoryAction": {
+        "id": "240260841788846929",
+        "name": "Financial & Legal Services",
+        "icon": "\uD83D\uDDC4",
+        "__typename": "Category"
+      },
+      "addTagsAction": null,
+      "linkGoalAction": null,
+      "linkSavingsGoalAction": null,
+      "needsReviewByUserAction": null,
+      "unassignNeedsReviewByUserAction": false,
+      "sendNotificationAction": false,
+      "setHideFromReportsAction": false,
+      "reviewStatusAction": null,
+      "actionSetOwnerIsJoint": false,
+      "actionSetOwner": null,
+      "actionSetBusinessEntity": null,
+      "actionSetBusinessEntityIsUnassigned": false,
+      "recentApplicationCount": 0,
+      "lastAppliedAt": null,
+      "splitTransactionsAction": null,
+      "__typename": "TransactionRuleV2"
+    },
+    {
+      "id": "240265406064013452",
+      "order": 2,
+      "merchantCriteriaUseOriginalStatement": false,
+      "merchantCriteria": null,
+      "originalStatementCriteria": [
+        {
+          "operator": "contains",
+          "value": "darbar",
+          "__typename": "MerchantCriterion"
+        }
+      ],
+      "merchantNameCriteria": null,
+      "amountCriteria": null,
+      "categoryIds": null,
+      "accountIds": null,
+      "categories": [],
+      "accounts": [],
+      "criteriaOwnerIsJoint": false,
+      "criteriaOwnerUserIds": null,
+      "criteriaOwnerUsers": null,
+      "criteriaBusinessEntityIds": null,
+      "criteriaBusinessEntityIsUnassigned": false,
+      "setMerchantAction": {
+        "id": "240265296272864050",
+        "name": "Darbar Entertainment",
+        "__typename": "Merchant"
+      },
+      "setCategoryAction": {
+        "id": "240260841788846913",
+        "name": "Entertainment & Recreation",
+        "icon": "\uD83C\uDFAC",
+        "__typename": "Category"
+      },
+      "addTagsAction": null,
+      "linkGoalAction": null,
+      "linkSavingsGoalAction": null,
+      "needsReviewByUserAction": null,
+      "unassignNeedsReviewByUserAction": false,
+      "sendNotificationAction": false,
+      "setHideFromReportsAction": false,
+      "reviewStatusAction": null,
+      "actionSetOwnerIsJoint": false,
+      "actionSetOwner": null,
+      "actionSetBusinessEntity": null,
+      "actionSetBusinessEntityIsUnassigned": false,
+      "recentApplicationCount": 0,
+      "lastAppliedAt": null,
+      "splitTransactionsAction": null,
+      "__typename": "TransactionRuleV2"
+    }
+  ]
+}
