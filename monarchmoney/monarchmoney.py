@@ -3355,6 +3355,210 @@ class MonarchMoney(object):
             graphql_query=query,
         )
 
+    async def create_transaction_rule(
+        self,
+        original_statement_value: str,
+        original_statement_operator: str = "contains",
+        set_category_action: Optional[str] = None,
+        set_merchant_action: Optional[str] = None,
+        review_status_action: Optional[str] = None,
+        apply_to_existing_transactions: bool = False,
+    ) -> Dict[str, Any]:
+        """
+        Creates a transaction rule matching on originalStatementCriteria.
+
+        :param original_statement_value: The statement text to match.
+        :param original_statement_operator: 'eq' or 'contains'.
+        :param set_category_action: Category ID to assign.
+        :param set_merchant_action: Merchant name to assign.
+        :param review_status_action: Review status to set (e.g. 'reviewed').
+        :param apply_to_existing_transactions: Apply rule to existing transactions.
+        """
+        if original_statement_operator not in ("eq", "contains"):
+            raise ValueError("original_statement_operator must be 'eq' or 'contains'")
+
+        query = gql(
+            """
+            mutation Common_CreateTransactionRuleMutationV2($input: CreateTransactionRuleInput!) {
+              createTransactionRuleV2(input: $input) {
+                errors {
+                  ...PayloadErrorFields
+                  __typename
+                }
+                __typename
+              }
+            }
+
+            fragment PayloadErrorFields on PayloadError {
+              fieldErrors {
+                field
+                messages
+                __typename
+              }
+              message
+              code
+              __typename
+            }
+        """
+        )
+        variables = {
+            "input": {
+                "originalStatementCriteria": [
+                    {
+                        "value": original_statement_value,
+                        "operator": original_statement_operator,
+                    }
+                ],
+                "merchantCriteria": None,
+                "merchantNameCriteria": None,
+                "amountCriteria": None,
+                "merchantCriteriaUseOriginalStatement": False,
+                "categoryIds": None,
+                "accountIds": None,
+                "addTagsAction": None,
+                "splitTransactionsAction": None,
+                "linkGoalAction": None,
+                "linkSavingsGoalAction": None,
+                "actionSetBusinessEntity": None,
+                "actionSetBusinessEntityIsUnassigned": False,
+                "setCategoryAction": set_category_action,
+                "setMerchantAction": set_merchant_action,
+                "reviewStatusAction": review_status_action,
+                "applyToExistingTransactions": apply_to_existing_transactions,
+            }
+        }
+        return await self.gql_call(
+            operation="Common_CreateTransactionRuleMutationV2",
+            graphql_query=query,
+            variables=variables,
+        )
+
+    async def preview_transaction_rule(
+        self,
+        original_statement_value: str,
+        original_statement_operator: str = "contains",
+        set_category_action: Optional[str] = None,
+        set_merchant_action: Optional[str] = None,
+        review_status_action: Optional[str] = None,
+        offset: int = 0,
+    ) -> Dict[str, Any]:
+        """
+        Previews which transactions would be affected by a rule without creating it.
+
+        :param original_statement_value: The statement text to match.
+        :param original_statement_operator: 'eq' or 'contains'.
+        :param set_category_action: Category ID to assign.
+        :param set_merchant_action: Merchant name to assign.
+        :param review_status_action: Review status to set (e.g. 'reviewed').
+        :param offset: Pagination offset for results.
+        """
+        if original_statement_operator not in ("eq", "contains"):
+            raise ValueError("original_statement_operator must be 'eq' or 'contains'")
+
+        query = gql(
+            """
+            query Common_PreviewTransactionRule($rule: TransactionRulePreviewInput!, $offset: Int) {
+              transactionRulePreview(input: $rule) {
+                totalCount
+                results(offset: $offset, limit: 30) {
+                  newName
+                  newSplitTransactions
+                  newCategory {
+                    id
+                    icon
+                    name
+                    __typename
+                  }
+                  newOwnerIsJoint
+                  newOwnerUser {
+                    id
+                    displayName
+                    profilePictureUrl
+                    __typename
+                  }
+                  newHideFromReports
+                  newTags {
+                    id
+                    name
+                    color
+                    order
+                    __typename
+                  }
+                  newGoal {
+                    id
+                    name
+                    imageStorageProvider
+                    imageStorageProviderId
+                    __typename
+                  }
+                  newBusinessEntity {
+                    id
+                    name
+                    logoUrl
+                    color
+                    __typename
+                  }
+                  newBusinessEntityIsUnassigned
+                  transaction {
+                    id
+                    date
+                    amount
+                    merchant {
+                      id
+                      name
+                      __typename
+                    }
+                    category {
+                      id
+                      name
+                      icon
+                      __typename
+                    }
+                    ownedByUser {
+                      id
+                      displayName
+                      profilePictureUrl
+                      __typename
+                    }
+                    businessEntity {
+                      id
+                      name
+                      logoUrl
+                      color
+                      __typename
+                    }
+                    __typename
+                  }
+                  __typename
+                }
+                __typename
+              }
+            }
+        """
+        )
+        variables = {
+            "offset": offset,
+            "rule": {
+                "originalStatementCriteria": [
+                    {
+                        "value": original_statement_value,
+                        "operator": original_statement_operator,
+                    }
+                ],
+                "merchantCriteriaUseOriginalStatement": False,
+                "actionSetBusinessEntityIsUnassigned": False,
+                "applyToExistingTransactions": False,
+                "setCategoryAction": set_category_action,
+                "setMerchantAction": set_merchant_action,
+                "reviewStatusAction": review_status_action,
+            },
+        }
+        return await self.gql_call(
+            operation="Common_PreviewTransactionRule",
+            graphql_query=query,
+            variables=variables,
+        )
+
     def _get_current_date(self) -> str:
         """
         Returns the current date as a string formatted like %Y-%m-%d.

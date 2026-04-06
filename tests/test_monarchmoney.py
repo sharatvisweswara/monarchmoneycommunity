@@ -293,6 +293,73 @@ class TestMonarchMoney(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(rules[2]["setMerchantAction"]["name"], "Darbar Entertainment")
         self.assertEqual(rules[2]["setCategoryAction"]["name"], "Entertainment & Recreation")
 
+    @patch.object(Client, "execute_async")
+    async def test_preview_transaction_rule(self, mock_execute_async):
+        """
+        Test the preview_transaction_rule method.
+        """
+        mock_execute_async.return_value = {
+            "transactionRulePreview": {
+                "totalCount": 1,
+                "results": [
+                    {
+                        "newName": "Shoreline Central Market",
+                        "newSplitTransactions": None,
+                        "newCategory": None,
+                        "newOwnerIsJoint": None,
+                        "newOwnerUser": None,
+                        "newHideFromReports": None,
+                        "newTags": None,
+                        "newGoal": None,
+                        "newBusinessEntity": None,
+                        "newBusinessEntityIsUnassigned": None,
+                        "transaction": {
+                            "id": "240261073578668873",
+                            "date": "2026-03-20",
+                            "amount": -18.81,
+                            "merchant": {"id": "m1", "name": "Privacy", "__typename": "Merchant"},
+                            "category": {"id": "c1", "name": "Miscellaneous", "icon": "💲", "__typename": "Category"},
+                            "ownedByUser": None,
+                            "businessEntity": None,
+                            "__typename": "Transaction",
+                        },
+                        "__typename": "TransactionPreview",
+                    }
+                ],
+                "__typename": "TransactionPreviewList",
+            }
+        }
+
+        result = await self.monarch_money.preview_transaction_rule(
+            original_statement_value="PwP  SHORELINE C Privacycom",
+            original_statement_operator="eq",
+            set_merchant_action="Shoreline Central Market",
+        )
+
+        mock_execute_async.assert_called_once()
+        kwargs = mock_execute_async.call_args.kwargs
+        self.assertEqual(kwargs["operation_name"], "Common_PreviewTransactionRule")
+        self.assertIn("variable_values", kwargs)
+        rule = kwargs["variable_values"]["rule"]
+        self.assertEqual(rule["originalStatementCriteria"][0]["value"], "PwP  SHORELINE C Privacycom")
+        self.assertEqual(rule["originalStatementCriteria"][0]["operator"], "eq")
+        self.assertEqual(rule["setMerchantAction"], "Shoreline Central Market")
+
+        preview = result["transactionRulePreview"]
+        self.assertEqual(preview["totalCount"], 1)
+        self.assertEqual(preview["results"][0]["newName"], "Shoreline Central Market")
+        self.assertEqual(preview["results"][0]["transaction"]["amount"], -18.81)
+
+    @patch.object(Client, "execute_async")
+    async def test_preview_transaction_rule_invalid_operator(self, mock_execute_async):
+        """Test that an invalid operator raises ValueError."""
+        with self.assertRaises(ValueError):
+            await self.monarch_money.preview_transaction_rule(
+                original_statement_value="foo",
+                original_statement_operator="invalid",
+            )
+        mock_execute_async.assert_not_called()
+
     @patch("builtins.input", return_value="")
     @patch("getpass.getpass", return_value="")
     async def test_interactive_login(self, _input_mock, _getpass_mock):
